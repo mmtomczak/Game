@@ -1,0 +1,8 @@
+nr, category, level, name, desc, is_hidden, Xval, Yval, loot, special
+1, location, 0, Cave, Dark little cave just beside the road..., no, 3, 3, Red Key, 0
+2, location, 0, Windmill, Old windmill , no, 4, 6, Sword, 0
+3, enemy, 5, Wild Wolf, Aggressive wild wolf, no, 5, 2, 0, 0
+4, enemy, 10, Dark Mage, The dark one, no, 10, 7, Dark potion, 0
+5, item, 0, Armor, Armor made from the ancient steel, yes, 2, 1, 0, 0
+6, location, 0, Hidden entrance, Someone covered it with leaves... , yes, 7, 5, Red Rune, 0
+7, location, 0, The old armory, i need the key to open it, no, 8, 8, Red potion, Red Key
