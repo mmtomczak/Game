@@ -2,7 +2,8 @@ import random
 
 
 class Character:
-    def __init__(self, name: str, health: int, level: int, xp: int):
+    def __init__(self, name: str, health: int, level: int, xp: int, Xval: int, Yval: int):
+        self.coord = [Xval, Yval]
         self.name = name
         self.health = health
         self.level = level
@@ -26,8 +27,8 @@ class Character:
 
 
 class Enemy(Character):
-    def __init__(self, name: str, health: int, level: int, xp: int, item: str):
-        super().__init__(name, health, level, xp)
+    def __init__(self, name: str, health: int, level: int, xp: int, item: str, Xval: int, Yval: int):
+        super().__init__(name, health, level, xp, Xval, Yval)
         self.loot = item
 
     def attack(self) -> int:
@@ -35,9 +36,9 @@ class Enemy(Character):
 
 
 class Player(Character):
-    def __init__(self, name: str, health: int, level: int, xp: int):
-        super().__init__(name, health, level, xp)
-        self.inventory = []
+    def __init__(self, name: str, health: int, level: int, xp: int, Xval: int, Yval: int, inventory = []):
+        super().__init__(name, health, level, xp, Xval, Yval)
+        self.inventory = inventory
 
     def gain_xp(self, xp: int):
         self.xp += xp
