@@ -1,10 +1,16 @@
-from game_map import Map
+from game_map import MapArea, MapSquare
+from game import Game
 
 
 def main():
-    gmap = Map("map.txt")
-    print(gmap.game_map[0].name)
-    print(gmap.game_map[0].is_hidden)
+    gme = Game("map.txt", 10, 5, 0, 2, 1, [])
+    print(gme.map.map_size)
+    print(gme.current_location().name)
+    print(gme.look_around())
+    print(gme.pickup())
+    print(gme.current_location())
+    print(gme.player.inventory)
+
     
 
 

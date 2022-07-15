@@ -5,4 +5,4 @@ nr,category,level,name,desc,is_hidden,Xval,Yval,loot,special
 4,enemy,10,Dark Mage,The dark one,0,10,7,Dark potion,0
 5,item,0,Armor,Armor made from the ancient steel,1,2,1,0,0
 6,location,0,Hidden entrance,Someone covered it with leaves...,1,7,5,Red Rune,0
-7,location,0,The old armory, It may hide some items,0,8,8,Red potion,Red Key
+7,location,0,The old armory, It may hide some items,0,8,8,0,Red Key

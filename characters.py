@@ -42,11 +42,17 @@ class Player(Character):
 
     def gain_xp(self, xp: int):
         self.xp += xp
+        return True
+
+    def pickup_item(self, item:str):
+        self.inventory.append(item)
+        return True
 
     def check_xp(self) -> bool:
         if self.xp >= self.level * 2:
             self.xp -= self.level * 2
             self.level += 1
+            self.health += self.level*2
             return True
         else:
             return False
