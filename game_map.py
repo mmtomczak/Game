@@ -17,7 +17,6 @@ class MapSquare:
         self.is_hidden = False
 
 
-
 class Location(MapSquare):
     def __init__(self, categ:str, name: str, desc: int, is_hidden: bool, Xval: int, Yval: int, loot: str, special: str):
         super().__init__(categ, name, desc, is_hidden, Xval, Yval)

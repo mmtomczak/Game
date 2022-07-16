@@ -10,6 +10,7 @@ def main():
     print(gme.pickup())
     print(gme.current_location())
     print(gme.player.inventory)
+    print(gme.player.__repr__())
 
     
 
