@@ -14,20 +14,52 @@ class Game:
                                                            self.player.xp, self.player.coord[0], self.player.coord[1],
                                                            self.player.inventory)
 
+    def get_hit_damage(self):
+        return self.player.attack()
+
+    def enemy_hit(self, damage):
+        player_location = self.current_location()
+        player_location.is_hit(damage)
+        return True
+
     def attack(self) -> int:
         player_location = self.current_location()
         if player_location is not None:
             if isinstance(player_location, Enemy):
                 if random.randrange(0, 2):
-                    damage = self.player.attack()
-                    player_location.is_hit(damage)
-                    return damage
+                    return 1
                 return 0  # attack not successful
             return -1  # no enemy at player location
         return -2  # current player location is empty
 
     def current_location(self):
         return self.map.game_map[self.player.coord[0]][self.player.coord[1]]
+
+    def get_needed_item(self):
+        player_location = self.current_location()
+        if isinstance(player_location, Location) and player_location.special:
+            return player_location.special
+        else:
+            return False
+
+    def is_location_class(self):
+        return isinstance(self.current_location(), Location)
+
+    def is_enemy_class(self):
+        return isinstance(self.current_location(), Enemy)
+
+    def is_mapsquare_class(self):
+        return isinstance(self.current_location(), MapSquare)
+
+    def can_enter(self):
+        player_location = self.current_location()
+        if isinstance(player_location, Location):
+            if player_location.special:
+                if player_location.special in self.player.inventory:
+                    return True
+                return False
+            return True
+        return False
 
     def look_around(self):
         player_location = self.current_location()
@@ -37,6 +69,15 @@ class Game:
                 return True
             return False
         return False
+
+    def is_player_hit(self):
+        if isinstance(self.current_location(), Enemy):
+            if random.randrange(0, 2):
+                return True
+            else:
+                return False
+        else:
+            return False
 
     def pickup(self):
         player_location = self.current_location()

@@ -1,16 +1,17 @@
-from game_map import MapArea, MapSquare
+from UI import UI
 from game import Game
 
 
 def main():
     gme = Game("map.txt", 10, 5, 0, 2, 1, [])
-    print(gme.map.map_size)
-    print(gme.current_location().name)
-    print(gme.look_around())
-    print(gme.pickup())
-    print(gme.current_location())
-    print(gme.player.inventory)
-    print(gme.player.__repr__())
+    game_ui = UI(gme)
+    game_ui.uncover_location()
+    game_ui.get_current_coordinates()
+    game_ui.print_inventory()
+    game_ui.describe_location()
+    game_ui.pickup_item()
+    game_ui.print_inventory()
+    game_ui.print_commands()
 
     
 

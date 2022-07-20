@@ -59,11 +59,13 @@ class Player(Character):
         self.inventory.append(item)
         return True
 
+    def level_up(self):
+        self.xp -= self.level * 2
+        self.level += 1
+        self.health += self.level * 2
+
     def check_xp(self) -> bool:
         if self.xp >= self.level * 2:
-            self.xp -= self.level * 2
-            self.level += 1
-            self.health += self.level * 2
             return True
         else:
             return False
