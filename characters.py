@@ -40,7 +40,7 @@ class Enemy(Character):
 
 
 class Player(Character):
-    def __init__(self, name: str, health: int, level: int, xp: int, Xval: int, Yval: int, inventory=[]):
+    def __init__(self, name: str, health: int, level: int, xp: int, Xval: int, Yval: int, inventory):
         super().__init__(name, health, level, xp, Xval, Yval)
         self.inventory = inventory
 

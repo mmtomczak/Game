@@ -81,7 +81,8 @@ class UI:
                 if self.game.current_location().is_hidden:
                     print("\tIt seems like someone has been here...")
                 else:
-                    print(f"{self.game.current_location().desc}")
+                    print(f"There is {self.game.current_location().name} here."
+                          f"\nIt is {self.game.current_location().desc}")
             elif self.game.is_enemy_class():
                 print(
                     f"\t{self.game.current_location().desc}\n\tI better draw my weapon, it is hostile "
@@ -97,13 +98,18 @@ class UI:
 
     def is_player_alive(self):
         if self.game.player.health <= 0:
-            return True
-        else:
             return False
+        else:
+            return True
 
-    def print_commands(self):
-        print("Avaliable commands: "
-              "\n\t1. go (direction: n/s/w/e) - to go in the given direction"
+    def print_player_health(self):
+        print(f"Current health: {self.game.player.health}")
+
+    @staticmethod
+    def print_commands():
+        print("Available commands: "
+              "\n\t0. commands - to print all commands"
+              "\n\t1. go - to go in the given direction"
               "\n\t2. describe - to describe current location"
               "\n\t3. examine - to uncover hidden items and location at current coordinates"
               "\n\t4. inventory - to print items in your inventory"
@@ -111,7 +117,10 @@ class UI:
               "\n\t6. coordinates - to print current coordinates"
               "\n\t7. health - to get your current health"
               "\n\t8. attack - to attack"
+              "\n\t9. save - to save"
+              "\n\t10. exit - to exit"
               "\nYou can enter either number or name of action you desire to take")
 
-    def player_death(self):
+    @staticmethod
+    def player_death():
         print(f"{'*'*30}\n\t\tYOU ARE DEAD!\n{'*'*30}")
