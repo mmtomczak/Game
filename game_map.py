@@ -4,6 +4,16 @@ from characters import Enemy
 
 class MapSquare:
     def __init__(self, categ:str, name: str, desc: str, is_hidden: bool, Xval: int, Yval: int):
+        """MapSquare object used to define place on the map
+
+        Args:
+            categ (str): category of object
+            name (str): name of object
+            desc (str): description of object
+            is_hidden (bool): is given object hidden
+            Xval (int): coordinates of object on x axis
+            Yval (int): coordinates of object on y axis
+        """
         self.categ = categ
         self.coord = [Xval, Yval]
         self.name = name
@@ -11,52 +21,117 @@ class MapSquare:
         self.is_hidden = is_hidden
 
     def get_desc(self):
+        """Method that returns description of class object
+
+        Returns:
+            str: description of object
+        """
         return self.desc
 
     def is_found(self) -> bool:
+        """Method that reveals hidden on map object if it was hidden
+
+        Returns:
+            bool: result of the action
+        """
+        if not self.is_hidden:
+            return False
         self.is_hidden = False
+        return True
 
 
 class Location(MapSquare):
     def __init__(self, categ:str, name: str, desc: int, is_hidden: bool, Xval: int, Yval: int, loot: str, special: str):
+        """Locaton class object that is child of the MapSquare class. Used to define location on map
+
+        Args:
+            categ (str): category of object
+            name (str): name of object
+            desc (int): descripton of object
+            is_hidden (bool): is given object hidden
+            Xval (int): coordinates of object on x axis
+            Yval (int): coordinates of object on y axis
+            loot (str): loot present at object
+            special (str): special item required to enter object
+        """
         super().__init__(categ, name, desc, is_hidden, Xval, Yval)
         self.loot = loot
         self.special = special
 
     def get_special(self):
+        """Method that returns special item needed to enter object
+
+        Returns:
+            str: special item
+        """
         return self.special
 
     def pickup_loot(self):
+        """Method that removes loot from object if it was picked up
+        """
         self.loot = "0"
 
 
 class MapArea:
     def __init__(self, map_file):
+        """MapArea class object. Used to store game map, locations on map and map size
+
+        Args:
+            map_file (str): name of map file
+        """
         locations = self.csv_read(map_file)
         map_locations = self.generate_locations(locations)
         self.map_size = self.get_map_size(locations)
         self.game_map = self.generate_map(map_locations)
 
     def generate_map(self, locations):
+        """Method used to generate game map
+
+        Args:
+            locations (list): list of locations on map
+
+        Returns:
+            list: map matrix
+        """
         map_area = []
         for i in range(0, self.map_size + 1):
             map_area.append([])
             for j in range(0, self.map_size + 1):
-                if self.get_location_by_coords(i, j, locations) is None:
+                if self.get_location_by_coords(i, j, locations) is None:  # no object at given coordinates
                     map_area[i].append(None)
                 else:
                     map_area[i].append(self.get_location_by_coords(i, j, locations))
         return map_area
 
     def remove_area(self, Xval, Yval):
+        """Method used to remove object from game map
+
+        Args:
+            Xval (int): coordinates of object on x axis
+            Yval (int): coordinates of object on y axis
+        """
         self.game_map[Xval][Yval] = None
 
     def pickup_loot(self, Xval, Yval):
-        if isinstance(self.game_map[Xval][Yval],"Location"):
-            self.game_map[Xval][Yval].pickup_loot()
+        """Method used to pick up loot that is present at object present at given coordinates
+
+        Args:
+            Xval (int): coordinates of object on x axis
+            Yval (int): coordinates of object on y axis
+        """
+        if isinstance(self.game_map[Xval][Yval], Location):  # loot is only present at Location class objects
+            return self.game_map[Xval][Yval].pickup_loot()
 
     @staticmethod
     def csv_read(map_file):
+        """Method used to extract map locations from csv file
+
+        Args:
+            map_file (str): name of the map file
+
+        Returns:
+            list: list of items present at map
+        """
         items = []
         try:
             with open("map.txt") as file:
@@ -72,34 +147,52 @@ class MapArea:
 
     @staticmethod
     def get_location_by_coords(x: int, y: int, locations):
+        """Method that returns object that is present at given coordinates
+
+        Args:
+            x (int): coordinates of object on x axis
+            y (int): coordinates of object on y axis
+            locations (list): list of map locations
+
+        Returns:
+            object: object present at given coordinates
+        """
         for item in locations:
             if item.coord[0] == x and item.coord[1] == y:
                 return item
-        return None
+        return None  # no object present at given coordinates
 
     @staticmethod
     def generate_locations(items):
+        """Method used to create given class objects of items present at map
+
+        Args:
+            items (list): list of items present on game map
+
+        Returns:
+            list: list of class objects present on map
+        """
         game_map = []
         try:
             for item in items:
-                if str(item[1]) == 'location':
+                if str(item[1]) == 'location':  # item is location class object
                     if item[9] == '0':
-                        special = None
+                        special = None  # no special item needed to enter
                     else:
-                        special = item[9]
+                        special = item[9]  # special item needed to enter
                     new_location = Location("location", item[3], item[4], bool(int(item[5])), int(item[6]), int(item[7]), item[8],
                                             special)
                     game_map.append(new_location)
-                elif item[1] == "item":
+                elif item[1] == "item":  # item is MapSquare class object
                     new_item = MapSquare("item", item[3], item[4], bool(int(item[5])), int(item[6]), int(item[7]))
                     game_map.append(new_item)
-                elif item[1] == 'enemy':
+                elif item[1] == 'enemy':  # item is Enemy class object
                     enemy_level = int(item[2])
                     enemy_points = enemy_level * 2
                     if item[8] == '0':
-                        enemy_item = None
+                        enemy_item = None  # object does not carry item
                     else:
-                        enemy_item = item[8]
+                        enemy_item = item[8]  # object carries an item
                     new_enemy = Enemy(name=item[3], health=enemy_points, level=enemy_level, xp=enemy_points,
                                       item=enemy_item, Xval=int(item[6]), Yval=int(item[7]))
                     game_map.append(new_enemy)
@@ -109,10 +202,18 @@ class MapArea:
 
     @staticmethod
     def get_map_size(map_file):
-        max_var = 0
+        """Method used to determine map size
+
+        Args:
+            map_file (list): list of items present on map
+
+        Returns:
+            int: map size
+        """
+        max_var = 0  # map size cannot be less than 0, when 0 indicates empty map
         for item in map_file:
             if int(item[6]) > int(item[7]) and int(item[6]) > max_var:
                 max_var = int(item[6])
             elif int(item[6]) < int(item[7]) and int(item[7]) > max_var:
                 max_var = int(item[7])
-        return max_var + 1
+        return max_var + 1  # map size is determined by adding 1 to max value of x/y coordinates

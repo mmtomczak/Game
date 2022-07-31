@@ -3,6 +3,11 @@ from game import Game
 
 class UI:
     def __init__(self, game: Game):
+        """UI class object. Used to communicate and determine actions to player
+
+        Args:
+            game (Game): played game
+        """
         self.game = game
 
     def start_game(self):
@@ -14,24 +19,24 @@ class UI:
         if direction in cases:
             if self.game.move(direction):
                 print('-' * 25)
-                print(f"Going {cases[direction]}...\n")
+                print(f"\tGoing {cases[direction]}...\n")
             else:
-                print("Cannot move in this direction!\n")
+                print("\tCannot move in this direction!\n")
         else:
-            print(f"{direction} is an invalid direction! Please use n/s/w/e to go north/south/west/east")
+            print(f"\t{direction} is an invalid direction! Please use n/s/w/e to go north/south/west/east")
 
     def attack(self):
         attack_status = self.game.attack()
         if attack_status == 0:
-            print("Attack was not successful!")
+            print("\tAttack was not successful!")
         elif attack_status == -1:
-            print("No enemy to attack!")
+            print("\tNo enemy to attack!")
         elif attack_status == -2:
-            print("There is nothing here...")
+            print("\tThere is nothing here...")
         else:
             damage = self.game.get_hit_damage()
             self.game.enemy_hit(damage)
-            print(f"Attack successful! Dealt {damage} damage to {self.game.current_location().name}")
+            print(f"\tAttack successful! Dealt {damage} damage to {self.game.current_location().name}")
 
     def get_current_coordinates(self):
         print(f"\tYour current coordinates are [{self.game.player.coord[0]}, {self.game.player.coord[1]}]")
@@ -40,9 +45,9 @@ class UI:
         action_result = self.game.look_around()
         if action_result:
             self.game.look_around()
-            print(f"You found {self.game.current_location().name}!")
+            print(f"\tYou found {self.game.current_location().name}!")
         else:
-            print("Nothing hidden here")
+            print("\tNothing hidden here")
 
     def level_up(self):
         if self.game.player.check_xp():
@@ -81,8 +86,8 @@ class UI:
                 if self.game.current_location().is_hidden:
                     print("\tIt seems like someone has been here...")
                 else:
-                    print(f"There is {self.game.current_location().name} here."
-                          f"\nIt is {self.game.current_location().desc}")
+                    print(f"\tThere is {self.game.current_location().name} here."
+                          f"\n\tIt is {self.game.current_location().desc}")
             elif self.game.is_enemy_class():
                 print(
                     f"\t{self.game.current_location().desc}\n\tI better draw my weapon, it is hostile "
