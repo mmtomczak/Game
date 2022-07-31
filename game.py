@@ -12,13 +12,13 @@ class Game:
             health (int, optional): Player health. Defaults to 10.
             level (int, optional): Player level. Defaults to 1.
             xp (int, optional): Player xp. Defaults to 0.
-            Xval (_type_, optional): Player position on X axis. Defaults to None.
-            Yval (_type_, optional): Player position on Y axis. Defaults to None.
+            Xval (int, optional): Player position on X axis. Defaults to None.
+            Yval (int, optional): Player position on Y axis. Defaults to None.
             inventory (list, optional): Player inventory. Defaults to [].
         """
         self.file = map_file
         self.map = MapArea(map_file)
-        if Xval is None and Yval is None:
+        if Xval is None and Yval is None:  # if arguments Xval and Yval are not declared, player is placed at the middle of the map
             Xval = Yval = int(self.map.map_size / 2)
         self.player = Player("Player", health, level, xp, Xval, Yval, inventory)
 
@@ -36,7 +36,7 @@ class Game:
         return self.player.attack()
 
     def enemy_hit(self, damage):
-        """Methot that is responsible for dealing damage to enemy
+        """Method that is responsible for dealing damage to enemy
 
         Args:
             damage (int): damage dealt to enemy 
@@ -79,7 +79,7 @@ class Game:
         if isinstance(player_location, Location) and player_location.special:
             return player_location.special  # if there is special item needed, its name will be returned 
         else:
-            return False  # if special item is not neccessary at current location nothing will be returned 
+            return False  # if special item is not necessary at current location nothing will be returned
 
     def is_location_class(self):
         """Method that checks if at current player location there is present Location class object
@@ -118,7 +118,7 @@ class Game:
                     return True  # Location class object requires special item to enter and said item is present in player inventory
                 return False  # Location class object requires special item to enter and said item is NOT present in player inventory
             return True  # Location class object doesn't require special item to enter
-        return False  # At current player location there is not Location class object
+        return False  # At current player location there is no Location class object
 
     def look_around(self):
         """Method that uncovers hidden items/locatin at current player position
@@ -132,10 +132,10 @@ class Game:
                 player_location.is_found()
                 return True  # hidden item/location uncovered
             return False  # no hidden item/location at current player position
-        return False  # at current position there is not present object that can be hidden
+        return False  # at current position there is no object present that can be hidden
 
     def is_player_hit(self):
-        """Method that determines if player has been hit by the Enemy, if it is present at current player loaction
+        """Method that determines if player has been hit by the Enemy, if it is present at current player location
 
         Returns:
             bool: random result
@@ -182,7 +182,7 @@ class Game:
             return player_location.desc
 
     def move(self, direction):
-        """Method that moves player character in given direction on the map
+        """Method that, if possible, moves player character in given direction on the map
 
         Args:
             direction (str): direction in which player is to be moved

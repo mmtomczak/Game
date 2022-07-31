@@ -65,8 +65,6 @@ def main():
                 GAME.player_death()
                 play_game = False
 
-    
-
 
 if __name__ == "__main__":
     main()
