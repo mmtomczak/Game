@@ -57,7 +57,7 @@ class Character:
 
 
 class Enemy(Character):
-    def __init__(self, name: str, health: int, level: int, xp: int, item: str, Xval: int, Yval: int):
+    def __init__(self, name: str, health: int, level: int, xp: int, item: str, Xval: int, Yval: int, desc: str):
         """Init method of child class Enemy object 
 
         Args:
@@ -71,6 +71,7 @@ class Enemy(Character):
         """
         super().__init__(name, health, level, xp, Xval, Yval)
         self.loot = item
+        self.desc = desc
 
     def __repr__(self):
         return "Enemy('{}', {}, {}, {}, {}, {}, {}, {})".format(self.name, self.health, self.level, self.xp, self.item,
@@ -82,7 +83,7 @@ class Enemy(Character):
         Returns:
             int: determined attack damage
         """
-        return random.randrange(int(self.level / 2), self.level)
+        return random.randrange(self.level, self.level*2)
 
 
 class Player(Character):
@@ -149,7 +150,7 @@ class Player(Character):
         Returns:
             bool: result of action
         """
-        if self.xp >= self.level * 2:
+        if self.xp >= self.level*2:
             return True
         else:
             return False
@@ -164,7 +165,7 @@ class Player(Character):
             power = self.level + 10
         else:
             power = self.level
-        return random.randrange(int(power / 2), power)
+        return random.randrange(power, 2*power)
 
     def is_hit(self, value: int):
         """Method that determines damage taken by class object

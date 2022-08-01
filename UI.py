@@ -37,6 +37,18 @@ class UI:
             damage = self.game.get_hit_damage()
             self.game.enemy_hit(damage)
             print(f"\tAttack successful! Dealt {damage} damage to {self.game.current_location().name}")
+            if not self.game.enemy_status():
+                if self.game.is_player_hit():
+                    damage = self.game.current_location().attack()
+                    damage_taken = self.game.player.is_hit(damage)
+                    print(f"\n\t{self.game.current_location().name} attacked back!\n\t{damage_taken} damage taken!")
+            else:
+                dropped_loot = self.game.current_location().loot
+                xp_gained = self.game.current_location().level*2
+                self.game.enemy_is_dead()
+                print(f"\tEnemy deafeated! You gained {xp_gained} XP!")
+                if dropped_loot is not None:
+                    print(f"\tIt dropped {dropped_loot}!")
 
     def get_current_coordinates(self):
         print(f"\tYour current coordinates are [{self.game.player.coord[0]}, {self.game.player.coord[1]}]")

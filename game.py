@@ -45,6 +45,23 @@ class Game:
         player_location.is_hit(damage)
         return True
 
+    def enemy_status(self):
+        return self.current_location().is_dead()
+
+    def enemy_is_dead(self):
+        if self.current_location().is_dead():
+            dead_enemy = self.current_location()
+            xp_gained = dead_enemy.level*2
+            self.player.gain_xp(xp_gained)
+            if dead_enemy.loot is not None:
+                self.map.add_dropped_loot(dead_enemy.loot, dead_enemy.name, dead_enemy.coord[0], dead_enemy.coord[1])
+            else:
+                self.map.remove_area(dead_enemy.coord[0],dead_enemy.coord[1])
+            return True
+        else:
+            return False
+
+
     def attack(self) -> int:
         """Method that determines if on current player position enemy that can be attacked is present and if attack is successful 
 

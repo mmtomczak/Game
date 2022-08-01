@@ -59,7 +59,7 @@ def main():
                     print("\tThanks for playing!\n\tExiting to main menu...")
                     play_game = False
                 else:
-                    print(f"{'-'*5} INVALID INPUT! {'-'*5}")
+                    print(f"{'-'*15} INVALID INPUT! {'-'*15}")
                     GAME.print_commands()
             else:
                 GAME.player_death()

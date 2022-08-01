@@ -103,6 +103,9 @@ class MapArea:
                     map_area[i].append(self.get_location_by_coords(i, j, locations))
         return map_area
 
+    def add_dropped_loot(self, name:str, enemy_name:str, Xval, Yval):
+        self.game_map[Xval][Yval] = MapSquare("item", name, f"Left after {enemy_name}", False, Xval, Yval)
+
     def remove_area(self, Xval, Yval):
         """Method used to remove object from game map
 
@@ -194,7 +197,7 @@ class MapArea:
                     else:
                         enemy_item = item[8]  # object carries an item
                     new_enemy = Enemy(name=item[3], health=enemy_points, level=enemy_level, xp=enemy_points,
-                                      item=enemy_item, Xval=int(item[6]), Yval=int(item[7]))
+                                      item=enemy_item, Xval=int(item[6]), Yval=int(item[7]), desc = item[4])
                     game_map.append(new_enemy)
             return game_map
         except Exception:
