@@ -1,5 +1,7 @@
+from typing import Type
 from UI import UI
 from game import Game
+import csv
 
 
 def welcome_message():
@@ -8,6 +10,40 @@ def welcome_message():
           f"\n\t2. Load game"
           f"\n\t3. Exit")
 
+def load_character():
+    items = []
+    try:
+        with open("character_save.txt") as file:
+            csvfile = csv.reader(file)
+            header = next(csvfile)
+            for row in csvfile:
+                item = row
+            return item
+    except FileNotFoundError:
+        print("\nCharacter save file not found!\n")
+    except Exception:
+        print("Unknown error!")
+
+def load_game() -> UI:
+    character = load_character()
+    try:
+        inventory = character[5]
+        if inventory != '':
+            inventory = inventory.split(';')
+        else:
+            inventory = []
+        try: 
+            GAME = UI(Game("map_save.txt", int(character[0]), int(character[1]), int(character[2]), int(character[3]), int(character[4]), inventory))
+            return GAME
+        except FileNotFoundError:
+            print(f"{'-'*40}\nSAVE FILE NOT FOUND\n{'-'*40}")
+            return UI(Game())
+    except TypeError:
+        GAME = UI(Game("map_save.txt"))
+        return GAME
+    except Exception:
+        print("Cant load the game")
+    
 
 def main():
     game_menu = True
@@ -18,11 +54,22 @@ def main():
         if selection == "1":
             play_game = True
             print("Starting new game...")
-            GAME = UI(Game())
-            GAME.start_game()
-            GAME.print_commands()
+            try:
+                GAME = UI(Game())
+                GAME.start_game()
+                GAME.print_commands()
+            except FileNotFoundError:
+                print("NO MAP FILE FOUND!")
+                play_game = False
         elif selection == "2":
-            pass
+            play_game = True
+            try:
+                GAME = load_game()
+                GAME.start_game()
+                GAME.print_commands()
+            except AttributeError:
+                print("NO MAP FILE FOUND!")
+                play_game = False
         elif selection == "3":
             print("Closing the game...")
             play_game = False
@@ -54,12 +101,12 @@ def main():
                 elif player_input == "8":
                     GAME.attack()
                 elif player_input == "9":
-                    pass
+                    GAME.save_game()
                 elif player_input == "10":
                     print("\tThanks for playing!\n\tExiting to main menu...")
                     play_game = False
                 else:
-                    print(f"{'-'*15} INVALID INPUT! {'-'*15}")
+                    print(f"/n{'-'*15} INVALID INPUT! {'-'*15}")
                     GAME.print_commands()
             else:
                 GAME.player_death()

@@ -1,6 +1,7 @@
 from characters import Player, Enemy
 from game_map import MapArea, MapSquare, Location
 import random
+import csv
 
 
 class Game:
@@ -27,6 +28,32 @@ class Game:
                                                            self.player.xp, self.player.coord[0], self.player.coord[1],
                                                            self.player.inventory)
 
+    def save_progress(self):
+        """Method creating csv files with saved current in-game progress
+
+        """
+        map_header = ["nr","category","level","name","desc","is_hidden","Xval","Yval","loot"]  # header for map save file
+        character_header = ["health", "level", "xp", "Xval", "Yval", "inventory"]  # header for player save file
+        # map save
+        with open("map_save.txt", "w", newline='') as file:
+            writer = csv.DictWriter(file, fieldnames = map_header)
+            locations = self.map.current_map_loactions()
+            writer.writeheader()
+            data = []
+            for item in locations:
+                data.append(item)
+            writer.writerows(data)
+        # player save
+        with open("character_save.txt", "w", newline='') as file:
+            writer = csv.DictWriter(file, fieldnames = character_header)
+            inventory = self.player.inventory
+            if inventory != []:  # if inventory is not empty items in inventory are connected in string divided by ";"
+                inventory = ";".join(inventory)
+            else:
+                inventory = ''
+            writer.writeheader()
+            writer.writerow({"health":self.player.health, "level":self.player.level, "xp":self.player.xp, "Xval":self.player.coord[0], "Yval":self.player.coord[1], "inventory":inventory})
+
     def get_hit_damage(self):
         """Method that returns damage that player will deal given enemy hit
 
@@ -46,10 +73,15 @@ class Game:
         return True
 
     def enemy_status(self):
+        """Method used to check if enemy at current location is dead
+
+        Returns:
+            bool: ststus of enemy
+        """
         return self.current_location().is_dead()
 
     def enemy_is_dead(self):
-        if self.current_location().is_dead():
+        if self.enemy_status():
             dead_enemy = self.current_location()
             xp_gained = dead_enemy.level*2
             self.player.gain_xp(xp_gained)
@@ -86,18 +118,6 @@ class Game:
         """
         return self.map.game_map[self.player.coord[0]][self.player.coord[1]]
 
-    def get_needed_item(self):
-        """Returns item that is needed to perform actions on current location (special item)
-
-        Returns:
-            _type_: _description_
-        """
-        player_location = self.current_location()
-        if isinstance(player_location, Location) and player_location.special:
-            return player_location.special  # if there is special item needed, its name will be returned 
-        else:
-            return False  # if special item is not necessary at current location nothing will be returned
-
     def is_location_class(self):
         """Method that checks if at current player location there is present Location class object
 
@@ -121,21 +141,6 @@ class Game:
             bool: boolean value of result
         """
         return isinstance(self.current_location(), MapSquare)
-
-    def can_enter(self):
-        """Method that checks if player can enter Location class object at current location (if class object requires Special Item method checks if said item is present in player inventory)
-
-        Returns:
-            bool: result
-        """
-        player_location = self.current_location()
-        if isinstance(player_location, Location):
-            if player_location.special:
-                if player_location.special in self.player.inventory:
-                    return True  # Location class object requires special item to enter and said item is present in player inventory
-                return False  # Location class object requires special item to enter and said item is NOT present in player inventory
-            return True  # Location class object doesn't require special item to enter
-        return False  # At current player location there is no Location class object
 
     def look_around(self):
         """Method that uncovers hidden items/locatin at current player position

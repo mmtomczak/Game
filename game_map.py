@@ -41,7 +41,7 @@ class MapSquare:
 
 
 class Location(MapSquare):
-    def __init__(self, categ:str, name: str, desc: int, is_hidden: bool, Xval: int, Yval: int, loot: str, special: str):
+    def __init__(self, categ:str, name: str, desc: int, is_hidden: bool, Xval: int, Yval: int, loot: str):
         """Locaton class object that is child of the MapSquare class. Used to define location on map
 
         Args:
@@ -52,19 +52,9 @@ class Location(MapSquare):
             Xval (int): coordinates of object on x axis
             Yval (int): coordinates of object on y axis
             loot (str): loot present at object
-            special (str): special item required to enter object
         """
         super().__init__(categ, name, desc, is_hidden, Xval, Yval)
         self.loot = loot
-        self.special = special
-
-    def get_special(self):
-        """Method that returns special item needed to enter object
-
-        Returns:
-            str: special item
-        """
-        return self.special
 
     def pickup_loot(self):
         """Method that removes loot from object if it was picked up
@@ -83,6 +73,34 @@ class MapArea:
         map_locations = self.generate_locations(locations)
         self.map_size = self.get_map_size(locations)
         self.game_map = self.generate_map(map_locations)
+
+    def current_map_loactions(self):
+        """Method used to create list of current map locations, used to save the game progress
+
+        Returns:
+            list: list of map locations
+        """
+        map_locations = []
+        location_count = 1  # number used as first column of save file
+        for col in self.game_map:  # for every column in map matrix
+            for row in col:  # for every row in current column
+                if row is not None:  
+                    if isinstance(row, Location):
+                        current_loc = {"nr":location_count, "category":row.categ, "level":"0", "name":row.name, "desc":row.desc, "is_hidden":str(int(row.is_hidden)), "Xval":str(row.coord[0]),  "Yval":str(row.coord[1]), "loot":row.loot}
+                        map_locations.append(current_loc)
+                        location_count += 1
+                    elif isinstance(row, MapSquare):
+                        current_loc = {"nr":location_count, "category":row.categ, "level":"0", "name":row.name, "desc":row.desc, "is_hidden":str(int(row.is_hidden)), "Xval":str(row.coord[0]),  "Yval":str(row.coord[1]), "loot":"0"}
+                        map_locations.append(current_loc)
+                        location_count += 1
+                    elif isinstance(row, Enemy):
+                        loot = row.loot
+                        if loot is None:  # if enemy does not have obj.loot field 'loot' variable is set to '0' (save file format)
+                            loot = "0"
+                        current_loc = {"nr":location_count, "category":"enemy", "level":row.level, "name":row.name, "desc":row.desc, "is_hidden":"0", "Xval":str(row.coord[0]),  "Yval":str(row.coord[1]), "loot":loot}
+                        map_locations.append(current_loc)
+                        location_count += 1
+        return map_locations
 
     def generate_map(self, locations):
         """Method used to generate game map
@@ -136,16 +154,11 @@ class MapArea:
             list: list of items present at map
         """
         items = []
-        try:
-            with open("map.txt") as file:
-                csvfile = csv.reader(file)
-                header = next(csvfile)
-                for row in csvfile:
-                    items.append(row)
-        except FileNotFoundError:
-            print("Map file not found!")
-        except Exception:
-            print("Unknown error!")
+        with open(map_file) as file:
+            csvfile = csv.reader(file)
+            header = next(csvfile)
+            for row in csvfile:
+                items.append(row)
         return items
 
     @staticmethod
@@ -179,12 +192,7 @@ class MapArea:
         try:
             for item in items:
                 if str(item[1]) == 'location':  # item is location class object
-                    if item[9] == '0':
-                        special = None  # no special item needed to enter
-                    else:
-                        special = item[9]  # special item needed to enter
-                    new_location = Location("location", item[3], item[4], bool(int(item[5])), int(item[6]), int(item[7]), item[8],
-                                            special)
+                    new_location = Location("location", item[3], item[4], bool(int(item[5])), int(item[6]), int(item[7]), item[8])
                     game_map.append(new_location)
                 elif item[1] == "item":  # item is MapSquare class object
                     new_item = MapSquare("item", item[3], item[4], bool(int(item[5])), int(item[6]), int(item[7]))

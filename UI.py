@@ -13,76 +13,82 @@ class UI:
     def start_game(self):
         print(f"{'-' * 10} Welcome to the game, {self.game.player.name}! {'-' * 10}\n")
 
+    def load_successul():
+        print("\n\tGAME LOADED\n")
+
+    def save_game(self):
+        self.game.save_progress()
+        print(f"\n{'-' * 10} GAME SAVED {'-' * 10}\n")
+
     def move(self, direction: str):
         direction = direction.lower()
         cases = {'n': 'north', 's': 'south', 'e': 'east', 'w': 'west'}
         if direction in cases:
             if self.game.move(direction):
-                print('-' * 25)
-                print(f"\tGoing {cases[direction]}...\n")
+                print(f"\n\tGoing {cases[direction]}...\n")
             else:
-                print("\tCannot move in this direction!\n")
+                print("\n\tCannot move in this direction!\n")
         else:
-            print(f"\t{direction} is an invalid direction! Please use n/s/w/e to go north/south/west/east")
+            print(f"\n\t{direction} is an invalid direction! Please use n/s/w/e to go north/south/west/east\n")
 
     def attack(self):
         attack_status = self.game.attack()
         if attack_status == 0:
-            print("\tAttack was not successful!")
+            print("\n\tAttack was not successful!\n")
         elif attack_status == -1:
-            print("\tNo enemy to attack!")
+            print("\n\tNo enemy to attack!\n")
         elif attack_status == -2:
-            print("\tThere is nothing here...")
+            print("\n\tThere is nothing here...\n")
         else:
             damage = self.game.get_hit_damage()
             self.game.enemy_hit(damage)
-            print(f"\tAttack successful! Dealt {damage} damage to {self.game.current_location().name}")
+            print(f"\n\tAttack successful! Dealt {damage} damage to {self.game.current_location().name}\n")
             if not self.game.enemy_status():
                 if self.game.is_player_hit():
                     damage = self.game.current_location().attack()
                     damage_taken = self.game.player.is_hit(damage)
-                    print(f"\n\t{self.game.current_location().name} attacked back!\n\t{damage_taken} damage taken!")
+                    print(f"\n\t{self.game.current_location().name} attacked back!\n\t{damage_taken} damage taken!\n")
             else:
                 dropped_loot = self.game.current_location().loot
                 xp_gained = self.game.current_location().level*2
                 self.game.enemy_is_dead()
-                print(f"\tEnemy deafeated! You gained {xp_gained} XP!")
+                print(f"\n\tEnemy deafeated! You gained {xp_gained} XP!\n")
                 if dropped_loot is not None:
-                    print(f"\tIt dropped {dropped_loot}!")
+                    print(f"\n\tIt dropped {dropped_loot}!\n")
 
     def get_current_coordinates(self):
-        print(f"\tYour current coordinates are [{self.game.player.coord[0]}, {self.game.player.coord[1]}]")
+        print(f"\n\tYour current coordinates are [{self.game.player.coord[0]}, {self.game.player.coord[1]}]\n")
 
     def uncover_location(self):
         action_result = self.game.look_around()
         if action_result:
             self.game.look_around()
-            print(f"\tYou found {self.game.current_location().name}!")
+            print(f"\n\tYou found {self.game.current_location().name}!\n")
         else:
-            print("\tNothing hidden here")
+            print("\n\tNothing hidden here\n")
 
     def level_up(self):
         if self.game.player.check_xp():
             self.game.player.level_up()
-            print(f"{'*' * 5} LEVEL UP! {'*' * 5}\n\tCurrent level: {self.game.player.level}")
+            print(f"\n{'*' * 5} LEVEL UP! {'*' * 5}\n\tCurrent level: {self.game.player.level}\n")
 
     def pickup_item(self):
         pickup = self.game.pickup()
         if pickup is not None:
             self.game.pickup()
-            print(f"\tPicked up {pickup}!")
+            print(f"\n\tPicked up {pickup}!\n")
         else:
-            print("\tNothing to pickup here!")
+            print("\n\tNothing to pickup here!\n")
 
     def player_hit(self):
         if self.game.is_player_hit():
             value = self.game.current_location().attack()
             self.game.player.is_hit(value)
-            print(f"\tYou got hit for {value} damage!")
+            print(f"\n\tYou got hit for {value} damage!\n")
 
     def can_player_enter(self):
         if self.game.get_needed_item():
-            print(f"\tTo enter this place you need {self.game.get_needed_item()}")
+            print(f"\n\tTo enter this place you need {self.game.get_needed_item()}\n")
             return False
         else:
             return True
@@ -91,27 +97,27 @@ class UI:
         if self.game.current_location() is not None:
             if self.game.is_location_class():
                 if self.game.current_location().is_hidden:
-                    print("\tI think there is something here...")
+                    print("\n\tI think there is something here...\n")
                 else:
-                    print(f"\t{self.game.current_location().desc}")
+                    print(f"\n\tIt is {self.game.current_location().name},\n\t{self.game.current_location().desc}\n")
             elif self.game.is_mapsquare_class():
                 if self.game.current_location().is_hidden:
-                    print("\tIt seems like someone has been here...")
+                    print("\n\tIt seems like someone has been here...\n")
                 else:
-                    print(f"\tThere is {self.game.current_location().name} here."
-                          f"\n\tIt is {self.game.current_location().desc}")
+                    print(f"\n\tThere is {self.game.current_location().name} here."
+                          f"\n\tIt is {self.game.current_location().desc}\n")
             elif self.game.is_enemy_class():
                 print(
-                    f"\t{self.game.current_location().desc}\n\tI better draw my weapon, it is hostile "
-                    f"{self.game.current_location().name}")
+                    f"\n\t{self.game.current_location().desc}\n\tI better draw my weapon, it is hostile "
+                    f"{self.game.current_location().name}\n")
         else:
-            print("\tNothing here...")
+            print("\n\tNothing here...\n")
 
     def print_inventory(self):
         if self.game.player.inventory:
-            print(f"\t Items in your inventory:\n\t\t{self.game.player.inventory}")
+            print(f"\n\t Items in your inventory:\n\t\t{self.game.player.inventory}\n")
         else:
-            print("\tYour inventory is empty!")
+            print("\n\tYour inventory is empty!\n")
 
     def is_player_alive(self):
         if self.game.player.health <= 0:
@@ -120,11 +126,11 @@ class UI:
             return True
 
     def print_player_health(self):
-        print(f"Current health: {self.game.player.health}")
+        print(f"\n\tCurrent health: {self.game.player.health}\n")
 
     @staticmethod
     def print_commands():
-        print("Available commands: "
+        print("\nAvailable commands: "
               "\n\t0. commands - to print all commands"
               "\n\t1. go - to go in the given direction"
               "\n\t2. describe - to describe current location"
@@ -136,7 +142,7 @@ class UI:
               "\n\t8. attack - to attack"
               "\n\t9. save - to save"
               "\n\t10. exit - to exit"
-              "\nYou can enter either number or name of action you desire to take")
+              "\nPlease enter a number of action you desire to take\n")
 
     @staticmethod
     def player_death():
