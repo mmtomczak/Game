@@ -1,0 +1,23 @@
+nr,category,level,name,desc,is_hidden,Xval,Yval,loot
+1,location,0,Cave,Dark cave just beside the road...,0,1,1,Red Key
+2,location,0,Windmill,Old windmill with something shiny inside,0,1,2,Sword
+3,enemy,1,Wild Wolf,Aggressive wild wolf,0,1,3,0
+4,enemy,5,Dark Mage,Powerful boy,0,1,4,Dark potion
+5,item,0,Armour,Armour made from the ancient steel,1,1,5,0
+6,location,0,Hidden entrance,Someone covered it with leaves to hide something...,1,2,1,Red Rune
+7,location,0,The old armory, It may hide some items,0,2,2,Wooden stick
+8,location,0,Oatmeal,What is an oatmeal?,1,2,3,Oatmeal
+9,location,0,Boat,Who brought boat here??,0,2,4,Boat
+10,enemy,3,Angry goblin,Oh he's ANGRY,0,2,5,0
+11,enemy,1,Blob,What? Wonder if I can kill it,0,3,1,Blob corpse
+12,item,0,BIG STICK,It does nothing. But it's cool I guess...,1,3,2,0
+13,location,1,Red box,Wonder whats inside,1,3,3,suspicious potion
+14,location,0,Old house, Its old,0,3,4,Stainless steel stick
+15,enemy,1,Wild bear,TOTALLY not a placeholder to increase player level,0,3,5,0
+16,enemy,1,Wild bear,Wonder how many more are here,0,4,1,0
+17,enemy,1,Wild bear,He's big,0,4,2,0
+18,enemy,1,Bear,He's not wild,0,4,3,0
+19,enemy,1,Wild bear,It's a bear,0,4,4,0
+20,enemy,1,Wild,I think he is missing a bear,0,4,5,0
+21,enemy,1,Wild bear,Big boy,0,5,2,0
+22,enemy,1,Bear,He's not wild,0,5,1,0

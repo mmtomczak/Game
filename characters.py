@@ -10,8 +10,8 @@ class Character:
             health (int): health of the class object
             level (int): level of the class object
             xp (int): xp of the class object
-            Xval (int): coordinates on map on x axis
-            Yval (int): coordinates on map on y axis
+            Xval (int): coordinates on map on x-axis
+            Yval (int): coordinates on map on y-axis
         """
         self.coord = [Xval, Yval]
         self.name = name
@@ -19,20 +19,8 @@ class Character:
         self.level = level
         self.xp = xp
 
-    def heal(self) -> bool:
-        """Method healing character class object by 1 unit by random
-
-        Returns:
-            bool: result of action
-        """
-        if random.randint(0, 1) == 1:
-            self.health += 1
-            return True
-        else:
-            return False
-
-    def is_hit(self, value: int):
-        """Method that decreases hp ob character class object by given amount
+    def register_hit(self, value: int):
+        """Decreases hp ob character class object by given amount
 
         Args:
             value (int): damage taken
@@ -40,7 +28,7 @@ class Character:
         self.health -= value
 
     def is_dead(self) -> bool:
-        """Method that indicates if class object hp is less or equal 0
+        """Indicates if class object hp is less or equal 0
 
         Returns:
             bool: result of action
@@ -48,7 +36,7 @@ class Character:
         return self.health <= 0
 
     def get_level(self) -> int:
-        """Method that returns class object level
+        """Returns class object level
 
         Returns:
             int: level of the object
@@ -66,8 +54,8 @@ class Enemy(Character):
             level (int): level of the class object
             xp (int): xp of the class object
             item (str): item held by the class object
-            Xval (int): coordinates on map on x axis
-            Yval (int): coordinates on map on y axis
+            Xval (int): coordinates on map on x-axis
+            Yval (int): coordinates on map on y-axis
         """
         super().__init__(name, health, level, xp, Xval, Yval)
         self.loot = item
@@ -75,15 +63,26 @@ class Enemy(Character):
 
     def __repr__(self):
         return "Enemy('{}', {}, {}, {}, {}, {}, {}, {})".format(self.name, self.health, self.level, self.xp, self.item,
-                                                                self.coord[0], self.coord[1])
+                                                                self.coord[0], self.coord[1], self.desc)
 
     def attack(self) -> int:
-        """Method used to determine damage that class object inflicted 
+        """Used to determine damage that class object inflicted
 
         Returns:
             int: determined attack damage
         """
         return random.randrange(self.level, self.level*2)
+
+    def get_object_data(self) -> dict:
+        """Used to get Enemy class object information for save file
+
+        Returns:
+            dict: object information in save file formatting
+        """
+        loot = '0' if self.loot is None else self.loot
+        return {"nr": None, "category": "enemy", "level": self.level, "name": self.name,
+                                       "desc": self.desc, "is_hidden": "0", "Xval": str(self.coord[0]),
+                                       "Yval": str(self.coord[1]), "loot": loot}
 
 
 class Player(Character):
@@ -91,13 +90,13 @@ class Player(Character):
         """Init method of child class Player object
 
         Args:
-            name (str): name of the class obejct
-            health (int): helath of the class obejct
-            level (int): level of the class obejct
-            xp (int): xp of the class obejct
-            Xval (int): coordinates on map on x axis
-            Yval (int): coordinates on map on y axis
-            inventory (_type_): inventory of the class obejct
+            name (str): name of the class object
+            health (int): health of the class object
+            level (int): level of the class object
+            xp (int): xp of the class object
+            Xval (int): coordinates on map on x-axis
+            Yval (int): coordinates on map on y-axis
+            inventory (_type_): inventory of the class object
         """
         super().__init__(name, health, level, xp, Xval, Yval)
         self.inventory = inventory
@@ -120,11 +119,32 @@ class Player(Character):
         """
         if xp is None:
             return False
+
         self.xp += xp
         return True
 
+    def heal(self) -> int:
+        """Method healing player class object by 1 unit by random
+
+        Returns:
+            int: result of action
+        """
+
+        NOT_HEALED = 0
+        HEALED = 1
+        HEALTH_FULL = 2
+
+        if self.health < self.level*2:
+            if random.randint(0, 1) == 1:
+                self.health += 1
+                return HEALED
+            else:
+                return NOT_HEALED
+        else:
+            return HEALTH_FULL
+
     def pickup_item(self, item: str):
-        """Method used to add picked up item to class object inventory
+        """Add picked up item to class object inventory
 
         Args:
             item (str): picked up item
@@ -142,10 +162,10 @@ class Player(Character):
         """
         self.xp -= self.level * 2
         self.level += 1
-        self.health += self.level * 2
+        self.health = self.level * 2
 
     def check_xp(self) -> bool:
-        """Method used to check if class object has enough xp to increase level
+        """Checks if class object has enough xp to increase level
 
         Returns:
             bool: result of action
@@ -156,7 +176,7 @@ class Player(Character):
             return False
 
     def attack(self) -> int:
-        """Method used to determine attack value
+        """Determines attack value
 
         Returns:
             int: attack value
@@ -167,14 +187,14 @@ class Player(Character):
             power = self.level
         return random.randrange(power, 2*power)
 
-    def is_hit(self, value: int):
-        """Method that determines damage taken by class object
+    def register_hit(self, value: int):
+        """Determines damage taken by class object
 
         Args:
             value (int): damage taken
 
         Returns:
-            int: value substracted from class object hp
+            int: value subtracted from class object hp
         """
         if "Armor" in self.inventory:
             self.health -= int(value / 5)  # Armor divides taken damage by 5

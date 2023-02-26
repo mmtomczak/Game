@@ -1,7 +1,11 @@
-from typing import Type
 from UI import UI
 from game import Game
 import csv
+
+"""
+MAIN GAME FILE
+Make sure map.csv file is in the same directory as this and other game files
+"""
 
 
 def welcome_message():
@@ -10,10 +14,11 @@ def welcome_message():
           f"\n\t2. Load game"
           f"\n\t3. Exit")
 
+
 def load_character():
     items = []
     try:
-        with open("character_save.txt") as file:
+        with open("character_save.csv") as file:
             csvfile = csv.reader(file)
             header = next(csvfile)
             for row in csvfile:
@@ -24,6 +29,7 @@ def load_character():
     except Exception:
         print("Unknown error!")
 
+
 def load_game() -> UI:
     character = load_character()
     try:
@@ -33,13 +39,14 @@ def load_game() -> UI:
         else:
             inventory = []
         try: 
-            GAME = UI(Game("map_save.txt", int(character[0]), int(character[1]), int(character[2]), int(character[3]), int(character[4]), inventory))
+            GAME = UI(Game("map_save.csv", int(character[0]), int(character[1]), int(character[2]), int(character[3]),
+                           int(character[4]), inventory))
             return GAME
         except FileNotFoundError:
             print(f"{'-'*40}\nSAVE FILE NOT FOUND\n{'-'*40}")
             return UI(Game())
     except TypeError:
-        GAME = UI(Game("map_save.txt"))
+        GAME = UI(Game("map_save.csv"))
         return GAME
     except Exception:
         print("Cant load the game")
@@ -47,7 +54,7 @@ def load_game() -> UI:
 
 def main():
     game_menu = True
-    print(f"\n{'*' * 5} Welcome to the game! {'*' * 5}")
+    print(f"\n\n{'*' * 5} Welcome to the game! {'*' * 5}")
     while game_menu:
         welcome_message()
         selection = input("What you want to do?: ")
@@ -55,7 +62,8 @@ def main():
             play_game = True
             print("Starting new game...")
             try:
-                GAME = UI(Game())
+                new_load = Game(inventory=[])
+                GAME = UI(new_load)
                 GAME.start_game()
                 GAME.print_commands()
             except FileNotFoundError:
@@ -65,6 +73,7 @@ def main():
             play_game = True
             try:
                 GAME = load_game()
+                GAME.load_successful()
                 GAME.start_game()
                 GAME.print_commands()
             except AttributeError:
@@ -77,40 +86,43 @@ def main():
         else:
             play_game = False
             print("INVALID INPUT!")
+
         while play_game:
-            if GAME.is_player_alive():
-                GAME.level_up()
-                player_input = input("What you want to do?: ")
-                if player_input == "0":
-                    GAME.print_commands()
-                elif player_input == "1":
-                    direction = input("\tIn what direction? (n/s/w/e): ")
-                    GAME.move(direction)
-                elif player_input == "2":
-                    GAME.describe_location()
-                elif player_input == "3":
-                    GAME.uncover_location()
-                elif player_input == "4":
-                    GAME.print_inventory()
-                elif player_input == "5":
-                    GAME.pickup_item()
-                elif player_input == "6":
-                    GAME.get_current_coordinates()
-                elif player_input == "7":
-                    GAME.print_player_health()
-                elif player_input == "8":
-                    GAME.attack()
-                elif player_input == "9":
-                    GAME.save_game()
-                elif player_input == "10":
-                    print("\tThanks for playing!\n\tExiting to main menu...")
-                    play_game = False
-                else:
-                    print(f"/n{'-'*15} INVALID INPUT! {'-'*15}")
-                    GAME.print_commands()
-            else:
+            if not GAME.is_player_alive():
                 GAME.player_death()
+                break
+
+            GAME.level_up()
+            player_input = input("What do you want to do?: ")
+            if player_input == "0":
+                GAME.print_commands()
+            elif player_input == "1":
+                direction = input("\tIn what direction? (n/s/w/e): ")
+                GAME.move(direction)
+            elif player_input == "2":
+                GAME.describe_location()
+            elif player_input == "3":
+                GAME.uncover_location()
+            elif player_input == "4":
+                GAME.print_inventory()
+            elif player_input == "5":
+                GAME.pickup_item()
+            elif player_input == "6":
+                GAME.get_current_coordinates()
+            elif player_input == "7":
+                GAME.print_player_health()
+            elif player_input == "8":
+                GAME.attack()
+            elif player_input == "9":
+                GAME.heal()
+            elif player_input == "10":
+                GAME.save_game()
+            elif player_input == "11":
+                print("\tThanks for playing!\n\tExiting to main menu...")
                 play_game = False
+            else:
+                print(f"\n{'-'*15} INVALID INPUT! {'-'*15}")
+                GAME.print_commands()
 
 
 if __name__ == "__main__":
